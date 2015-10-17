@@ -1,5 +1,11 @@
 # -*- coding: utf-8 -*-
 
+
+# Trick for unicode symbols
+import sys
+reload(sys)
+sys.setdefaultencoding("utf-8")
+
 import vk_api
 import config
 
@@ -26,14 +32,15 @@ def main():
         запрос.
     """
 
-    wall = tools.get_all('wall.get', 100, {'owner_id': 1})
+    wall = tools.get_all('wall.get', 100, {'owner_id': 30666517})
     print('Posts count:', wall['count'])
 
     if wall['count']:
-        print('First post:', wall['items'][0], '\n')
+        # print wall['items'][1]
+        print str(wall['items'][1]['text'])
 
     if wall['count'] > 1:
-        print('Last post:', wall['items'][-1])
+        print('Last post:', wall['items'][-1]['text'])
 
 if __name__ == '__main__':
     main()
