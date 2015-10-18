@@ -32,12 +32,17 @@ def main():
         запрос.
     """
 
-    wall = tools.get_all('wall.get', 100, {'owner_id': 30666517})
+    wall = tools.get_all('wall.get', 100, {'owner_id': 1})
     print('Posts count:', wall['count'])
 
     if wall['count']:
         # print wall['items'][1]
-        print str(wall['items'][1]['text'])
+        i = 0
+        while i < int(wall['count']):
+            print str(wall['items'][i]['text'])
+            print i
+            i= i+1
+
 
     if wall['count'] > 1:
         print('Last post:', wall['items'][-1]['text'])
