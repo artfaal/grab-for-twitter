@@ -41,8 +41,7 @@ def main():
         while i < int(wall['count']):
             print str(wall['items'][i]['text'])
             print i
-            i= i+1
-
+            i = i + 1
 
     if wall['count'] > 1:
         print('Last post:', wall['items'][-1]['text'])
