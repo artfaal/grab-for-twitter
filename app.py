@@ -22,29 +22,10 @@ def main():
         print(error_msg)
         return
 
-    tools = vk_api.VkTools(vk)
-    """
-        VkTools.get_all позволяет получить все итемы, например со стены или
-        получить все диалоги, или сообщения. При использовании get_all
-        сокращается количество запросов к API за счет метода execute в 25 раз.
-        Например за раз со стены можно получить 100 * 25 = 2500, где
-        100 - максимальное количество постов, которое можно получить за один
-        запрос.
-    """
+    response = vk.method('wall.get', {'owner_id':'-56333679', 'count': 1, 'offset': 2})
+    if response['items']:
+        print(response['items'][0])
 
-    wall = tools.get_all('wall.get', 100, {'owner_id': 1})
-    print('Posts count:', wall['count'])
-
-    if wall['count']:
-        # print wall['items'][1]
-        i = 0
-        while i < int(wall['count']):
-            print str(wall['items'][i]['text'])
-            print i
-            i = i + 1
-
-    if wall['count'] > 1:
-        print('Last post:', wall['items'][-1]['text'])
 
 if __name__ == '__main__':
     main()
