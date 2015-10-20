@@ -28,10 +28,15 @@ def authTwitter():
     return api
 
 
-class getPostFromVk():
-    pass
+class GetVk:
+    def getFullWall(self, owner_id, count):
+        response = authVk().method('wall.get', {'owner_id':
+                                                owner_id, 'count': count})
+        return response
 
 
 if __name__ == '__main__':
-    authVk()
-    authTwitter()
+    # authVk()
+    # authTwitter()
+    get = GetVk()
+    print get.getFullWall('-56333679', 1)

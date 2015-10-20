@@ -22,7 +22,8 @@ def main():
         print(error_msg)
         return
 
-    response = vk.method('wall.get', {'owner_id':'-56333679', 'count': 1, 'offset': 2})
+    response = vk.method('wall.get', {'owner_id': '-56333679',
+                                      'count': 1, 'offset': 2})
     if response['items']:
         print(response['items'][0])
 
