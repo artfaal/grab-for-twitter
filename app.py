@@ -29,14 +29,19 @@ def authTwitter():
 
 
 class GetVk:
-    def getFullWall(self, owner_id, count):
+    def __init__(self, owner_id, count):
+        self.owner_id = owner_id
+        self.count = count
+
+    def getFullWall(self):
         response = authVk().method('wall.get', {'owner_id':
-                                                owner_id, 'count': count})
+                                                self.owner_id,
+                                                'count': self.count})
         return response
 
 
 if __name__ == '__main__':
     # authVk()
     # authTwitter()
-    get = GetVk()
-    print get.getFullWall('-56333679', 1)
+    get = GetVk(owner_id='-56333679', count=1)
+    print get.getFullWall()
