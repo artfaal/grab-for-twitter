@@ -32,14 +32,24 @@ def auth_twitter():
 
 
 class GetVk(object):
-    def __init__(self, owner_id, count):
+    """
+    Список методов VK: https://vk.com/dev/methods
+
+    Атрибуты:
+    owner_id: идентификатор пользователя или сообщества
+    count: количество записей, которое необходимо получить (но не более 100)
+    offset: смещение, необходимое для выборки определенного подмножества записей
+    """
+    def __init__(self, owner_id, count, offset):
         self.owner_id = owner_id
         self.count = count
+        self.offset = offset
 
     def get_full_wall(self):
-        response = auth_vk().method('wall.get', {'owner_id':
-                                                 self.owner_id,
-                                                 'count': self.count})
+        response = auth_vk().method('wall.get',
+                                    {'owner_id': self.owner_id,
+                                     'count': self.count,
+                                     'offset': self.offset})
         return response
 
     def get_img(self):
@@ -50,6 +60,6 @@ class GetVk(object):
 if __name__ == '__main__':
     # auth_vk()
     # auth_twitter()
-    get = GetVk(owner_id=GROUP_ID, count=1)
+    get = GetVk(owner_id=GROUP_ID, count=1, offset=1)
     # print get.get_full_wall()
     print get.get_img()
