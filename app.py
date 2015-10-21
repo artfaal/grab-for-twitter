@@ -46,25 +46,55 @@ class GetVk(object):
         self.offset = offset
 
     def get_raw_post(self):
+        # Здесь мы получаем RAW поста по заданным параметрам
         response = auth_vk().method('wall.get',
                                     {'owner_id': self.owner_id,
                                      'count': self.count,
                                      'offset': self.offset})
         return response
 
+    def best_photo_pars(self):
+        # Парсер на предмет нахождения фотки лучшего качества
+        pass
+
     def get_img(self):
+        # Беря за основу get_raw_post извлекаем все картинки из поста
+        # в максимальном качестве.
+        # TODO photo_2560 Не всегда работает. Надо
+        # запилить функцию, которая парсит это дело.
+        # Плюс попадается текст Original и ссылка внутри. Надо это
+        # тоже как-то отслеживать.
         raw = self.get_raw_post()
-        raw_attachments = raw['items'][0]['attachments']
-        if len(raw_attachments) > 1:
-            for i in raw_attachments:
-                print i['photo']['photo_2560']
+        attachments = raw['items'][0]['attachments']
+        links = []
+        if len(attachments) > 1:
+            for i in attachments:
+                try:
+                    links.append(i['photo']['photo_2560'])
+                except KeyError, e:
+                    print 'Несуществующий ключ: '+str(e)
+                    sys.exit(1)
         else:
-            print raw_attachments[0]['photo']['photo_2560']
+            try:
+                links.append(attachments[0]['photo']['photo_2560'])
+            except KeyError, e:
+                print 'Несуществующий ключ: '+str(e)
+                sys.exit(1)
+
+        return links
+
+    def get_txt(self):
+        raw = self.get_raw_post()
+        text = raw['items'][0]['text']
+        if len(text) > 1:
+            return text
+        else:
+            return None
 
 
 if __name__ == '__main__':
     # auth_vk()
     # auth_twitter()
-    get = GetVk(owner_id=GROUP_ID, count=1, offset=4)
+    get = GetVk(owner_id=GROUP_ID, count=1, offset=1)
     # print get.get_raw_post()
-    get.get_img()
+    print get.get_img()
