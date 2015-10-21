@@ -96,3 +96,6 @@ if __name__ == '__main__':
     get = GetVk(owner_id=GROUP_ID, count=1, offset=1)
     # print get.get_raw_post()
     print get.get_img()
+
+# TODO json.dumps(response, indent=4, ensure_ascii=False,
+#                         separators=(',', ': '))
