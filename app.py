@@ -45,7 +45,7 @@ class GetVk(object):
         self.count = count
         self.offset = offset
 
-    def get_full_wall(self):
+    def get_raw_post(self):
         response = auth_vk().method('wall.get',
                                     {'owner_id': self.owner_id,
                                      'count': self.count,
@@ -53,13 +53,18 @@ class GetVk(object):
         return response
 
     def get_img(self):
-        post = self.get_full_wall()  # _       _
-        return post['items'][0]['attachments'][0]['photo']['text']
+        raw = self.get_raw_post()
+        raw_attachments = raw['items'][0]['attachments']
+        if len(raw_attachments) > 1:
+            for i in raw_attachments:
+                print i['photo']['photo_2560']
+        else:
+            print raw_attachments[0]['photo']['photo_2560']
 
 
 if __name__ == '__main__':
     # auth_vk()
     # auth_twitter()
-    get = GetVk(owner_id=GROUP_ID, count=1, offset=1)
-    # print get.get_full_wall()
-    print get.get_img()
+    get = GetVk(owner_id=GROUP_ID, count=1, offset=4)
+    # print get.get_raw_post()
+    get.get_img()
