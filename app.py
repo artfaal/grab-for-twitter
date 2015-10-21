@@ -10,7 +10,7 @@ reload(sys)
 sys.setdefaultencoding("utf-8")
 
 
-def authVk():
+def auth_vk():
     vk = vk_api.VkApi(config.LOGIN_VK, config.PASS_VK)
     try:
         vk.authorization()
@@ -20,7 +20,7 @@ def authVk():
     return vk
 
 
-def authTwitter():
+def auth_twitter():
     auth = tweepy.OAuthHandler(config.TWIKEY, config.TWISECRET)
     auth.secure = True
     auth.set_access_token(config.TWITOKEN, config.TWITOKENSECRET)
@@ -33,15 +33,15 @@ class GetVk:
         self.owner_id = owner_id
         self.count = count
 
-    def getFullWall(self):
-        response = authVk().method('wall.get', {'owner_id':
-                                                self.owner_id,
-                                                'count': self.count})
+    def get_full_wall(self):
+        response = auth_vk().method('wall.get', {'owner_id':
+                                                 self.owner_id,
+                                                 'count': self.count})
         return response
 
 
 if __name__ == '__main__':
-    # authVk()
-    # authTwitter()
+    # auth_vk()
+    # auth_twitter()
     get = GetVk(owner_id='-56333679', count=1)
-    print get.getFullWall()
+    print get.get_full_wall()
