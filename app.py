@@ -9,6 +9,9 @@ import config
 reload(sys)
 sys.setdefaultencoding("utf-8")
 
+# TEMPORATY LIST OF GROUP
+GROUP_ID = '-56333679'
+
 
 def auth_vk():
     vk = vk_api.VkApi(config.LOGIN_VK, config.PASS_VK)
@@ -28,7 +31,7 @@ def auth_twitter():
     return api
 
 
-class GetVk:
+class GetVk(object):
     def __init__(self, owner_id, count):
         self.owner_id = owner_id
         self.count = count
@@ -39,9 +42,14 @@ class GetVk:
                                                  'count': self.count})
         return response
 
+    def get_img(self):
+        post = self.get_full_wall()  # _       _
+        return post['items'][0]['attachments'][0]['photo']['text']
+
 
 if __name__ == '__main__':
     # auth_vk()
     # auth_twitter()
-    get = GetVk(owner_id='-56333679', count=1)
-    print get.get_full_wall()
+    get = GetVk(owner_id=GROUP_ID, count=1)
+    # print get.get_full_wall()
+    print get.get_img()
