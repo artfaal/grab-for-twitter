@@ -72,13 +72,13 @@ class GetVk(object):
                 try:
                     links.append(i['photo']['photo_2560'])
                 except KeyError, e:
-                    print 'Несуществующий ключ: '+str(e)
+                    print 'Несуществующий ключ: %s' % str(e)
                     sys.exit(1)
         else:
             try:
                 links.append(attachments[0]['photo']['photo_2560'])
             except KeyError, e:
-                print 'Несуществующий ключ: '+str(e)
+                print 'Несуществующий ключ: %s' % str(e)
                 sys.exit(1)
 
         return links
@@ -93,8 +93,6 @@ class GetVk(object):
 
 
 if __name__ == '__main__':
-    # auth_vk()
-    # auth_twitter()
     get = GetVk(owner_id=GROUP_ID, count=1, offset=1)
     # print get.get_raw_post()
     print get.get_img()
