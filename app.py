@@ -4,6 +4,7 @@ import sys
 import vk_api
 import tweepy
 import config
+import json
 
 # Trick for normal unicode symbols
 reload(sys)
@@ -51,7 +52,13 @@ class GetVk(object):
                                     {'owner_id': self.owner_id,
                                      'count': self.count,
                                      'offset': self.offset})
+        # return json.dumps(response, indent=4, ensure_ascii=False,
+                          # separators=(',', ': '))
         return response
+
+    def pretty_raw_post(self):
+        return json.dumps(self.get_raw_post(), indent=4, ensure_ascii=False,
+                          separators=(',', ': '))
 
     def best_photo_pars(self):
         # Парсер на предмет нахождения фотки лучшего качества
@@ -94,8 +101,5 @@ class GetVk(object):
 
 if __name__ == '__main__':
     get = GetVk(owner_id=GROUP_ID, count=1, offset=1)
-    # print get.get_raw_post()
-    print get.get_img()
-
-# TODO json.dumps(response, indent=4, ensure_ascii=False,
-#                         separators=(',', ': '))
+    print get.pretty_raw_post()
+    # print get.get_img()
