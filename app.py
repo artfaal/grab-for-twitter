@@ -87,18 +87,17 @@ class GetVk(object):
     def get_img(self):
         # Беря за основу get_raw_post извлекаем все картинки из поста
         # в максимальном качестве.
-
+        # TODO Не отрабатывает посты, в которых нет картинок. Разобраться.
         raw = self.get_raw_post()
-        attachments = raw['items'][0]['attachments']
         links = []
-
-        if len(attachments) > 1:  # Если фоток больше одной
-            for i in attachments:
+        for item in raw['items']:
+            # Проверяем, не галимый ли это репост или видео
+            if 'attachments' in item:
+                attachments = item['attachments']
                 # Для каждой фотки отрабатывается функция
-                links.append(self.best_photo_pars(i['photo']))
-
-        else:  # Если фотка одна
-            links.append(self.best_photo_pars(attachments[0]['photo']))
+                links.append(self.best_photo_pars(attachments[0]['photo']))
+            else:
+                print "А тут нету фоточек"
 
         print 'Линки на фоточки: '+str(links)
 
@@ -112,7 +111,6 @@ class GetVk(object):
 
 
 if __name__ == '__main__':
-    get = GetVk(owner_id=GROUP_ID, count=1, offset=1)
+    get = GetVk(owner_id=GROUP_ID, count=3, offset=2)
     # print get.pretty_raw_post()
-    print '======================='
     print get.get_img()
