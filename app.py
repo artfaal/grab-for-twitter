@@ -92,7 +92,7 @@ class GetVk(object):
         links = []
         for item in raw['items']:
             # Проверяем, не галимый ли это репост или видео
-            if 'attachments' in item:
+            if 'attachments' in item and 'photo' in item['attachments'][0]:
                 attachments = item['attachments']
                 # Для каждой фотки отрабатывается функция
                 links.append(self.best_photo_pars(attachments[0]['photo']))
@@ -111,6 +111,6 @@ class GetVk(object):
 
 
 if __name__ == '__main__':
-    get = GetVk(owner_id=GROUP_ID, count=3, offset=2)
+    get = GetVk(owner_id=GROUP_ID, count=10, offset=1)
     # print get.pretty_raw_post()
     print get.get_img()
