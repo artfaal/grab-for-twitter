@@ -60,35 +60,47 @@ class GetVk(object):
         return json.dumps(self.get_raw_post(), indent=4, ensure_ascii=False,
                           separators=(',', ': '))
 
-    def best_photo_pars(self):
+    def best_photo_pars(self, raw):
         # Парсер на предмет нахождения фотки лучшего качества
-        pass
+        # + Поиск текста Оriginal специфичного для паблика
+        text = raw['text']
+        # Если находим текст "Original: http:" в поле text
+        if text.find('Original: http:') == 0:
+            begin = text.find('http:')  # Начало ссылки
+            end = text.find('.jpg')+4  # Конец ссылки
+            return text[begin:end]
+        else:
+            # Если в тексте не нашлось ссылки, работаем с миниатюрами
+            # Создаем список, куда закинем все ключи миниатюр
+            list_of_photo = []
+            # Проходимся по всему списку
+            for key, value in raw.iteritems():
+                # Находим ключи фотографий
+                if key.find('photo_') == 0:
+                    # Добавляем цифры в конце ключа в список
+                    list_of_photo.append(int(key[6:]))
+            # Выявляем максимальное число и сразу преобразуем обратно
+            max_size_photo_key = 'photo_'+str(max(list_of_photo))
+            # Возвращаем значение ключа
+            return raw[max_size_photo_key]
 
     def get_img(self):
         # Беря за основу get_raw_post извлекаем все картинки из поста
         # в максимальном качестве.
-        # TODO photo_2560 Не всегда работает. Надо
-        # запилить функцию, которая парсит это дело.
-        # Плюс попадается текст Original и ссылка внутри. Надо это
-        # тоже как-то отслеживать.
+
         raw = self.get_raw_post()
         attachments = raw['items'][0]['attachments']
         links = []
-        if len(attachments) > 1:
-            for i in attachments:
-                try:
-                    links.append(i['photo']['photo_2560'])
-                except KeyError, e:
-                    print 'Несуществующий ключ: %s' % str(e)
-                    sys.exit(1)
-        else:
-            try:
-                links.append(attachments[0]['photo']['photo_2560'])
-            except KeyError, e:
-                print 'Несуществующий ключ: %s' % str(e)
-                sys.exit(1)
 
-        return links
+        if len(attachments) > 1:  # Если фоток больше одной
+            for i in attachments:
+                # Для каждой фотки отрабатывается функция
+                links.append(self.best_photo_pars(i['photo']))
+
+        else:  # Если фотка одна
+            links.append(self.best_photo_pars(attachments[0]['photo']))
+
+        print 'Линки на фоточки: '+str(links)
 
     def get_txt(self):
         raw = self.get_raw_post()
@@ -101,5 +113,6 @@ class GetVk(object):
 
 if __name__ == '__main__':
     get = GetVk(owner_id=GROUP_ID, count=1, offset=1)
-    print get.pretty_raw_post()
-    # print get.get_img()
+    # print get.pretty_raw_post()
+    print '======================='
+    print get.get_img()
