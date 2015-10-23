@@ -5,6 +5,7 @@ import vk_api
 import tweepy
 import config
 import json
+import time
 
 # Trick for normal unicode symbols
 reload(sys)
@@ -87,7 +88,6 @@ class GetVk(object):
     def get_img(self):
         # Беря за основу get_raw_post извлекаем все картинки из поста
         # в максимальном качестве.
-        # TODO Не отрабатывает посты, в которых нет картинок. Разобраться.
         raw = self.get_raw_post()
         links = []
         for item in raw['items']:
@@ -97,9 +97,8 @@ class GetVk(object):
                 # Для каждой фотки отрабатывается функция
                 links.append(self.best_photo_pars(attachments[0]['photo']))
             else:
-                print "А тут нету фоточек"
-
-        print 'Линки на фоточки: '+str(links)
+                pass
+        return links
 
     def get_txt(self):
         raw = self.get_raw_post()
@@ -107,10 +106,42 @@ class GetVk(object):
         if len(text) > 1:
             return text
         else:
-            return None
+            pass
+
+
+# TODO Косяк с длинной сообщения. Показывает больше чем есть.
+def check_msg_len(message):
+    # Функция для проверки длинны сообщения перед отправкой.
+    if len(message) <= 140:
+        return message
+    else:
+        # TODO Захардкодил. Пока не работает.
+        # print 'Too long message, "%s" - too much \n' % len(message), message
+        # sys.exit(1)
+        return message
+
+
+def prepare_tweet():
+    # Подготовка твита перед отправкой.
+    get = GetVk(owner_id=GROUP_ID, count=1, offset=2)
+    txt = get.get_txt()
+    # TODO Задержка между запросами, хотя это дикие костыли.
+    # Так как запрос должен быть один. Надо его вынести в отдельную функцию.
+    time.sleep(4)
+    imgs = get.get_img()
+    # Если нету текста в сообщении, то просто пропускаем.
+    if txt is not None:
+        result = str(txt) + '\n' + str('\n'.join(imgs))
+        return check_msg_len(result)
+    else:
+        result = str(' \\n'.join(imgs))
+        return check_msg_len(result)
+
+
+def send_tweet():
+    # auth_twitter().update_status(status=prepare_tweet())
+    print ' Отправлено: ' + '\n' + prepare_tweet()
 
 
 if __name__ == '__main__':
-    get = GetVk(owner_id=GROUP_ID, count=10, offset=1)
-    # print get.pretty_raw_post()
-    print get.get_img()
+    send_tweet()
