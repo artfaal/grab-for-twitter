@@ -6,6 +6,8 @@ import tweepy
 import config
 import json
 import time
+import urllib
+import os
 
 # Trick for normal unicode symbols
 reload(sys)
@@ -123,7 +125,7 @@ def check_msg_len(message):
 
 def prepare_tweet():
     # Подготовка твита перед отправкой.
-    get = GetVk(owner_id=GROUP_ID, count=1, offset=2)
+    get = GetVk(owner_id=GROUP_ID, count=1, offset=5)
     txt = get.get_txt()
     # TODO Задержка между запросами, хотя это дикие костыли.
     # Так как запрос должен быть один. Надо его вынести в отдельную функцию.
@@ -131,16 +133,21 @@ def prepare_tweet():
     imgs = get.get_img()
     # Если нету текста в сообщении, то просто пропускаем.
     if txt is not None:
-        result = str(txt) + '\n' + str('\n'.join(imgs))
-        return check_msg_len(result)
+        return check_msg_len(str(txt)), imgs
     else:
-        result = str(' \\n'.join(imgs))
-        return check_msg_len(result)
+        return imgs
 
 
 def send_tweet():
     # auth_twitter().update_status(status=prepare_tweet())
-    print ' Отправлено: ' + '\n' + prepare_tweet()
+    text, link = prepare_tweet()
+
+    urllib.urlretrieve(link[0], "001.jpg")
+    fn = os.path.abspath('001.jpg')
+    magic = str([str(fn), str(fn)])
+    print magic
+    auth_twitter().update_with_media(fn, status=text)
+    # print ' Отправлено: ' + '\n' + prepare_tweet()
 
 
 if __name__ == '__main__':
