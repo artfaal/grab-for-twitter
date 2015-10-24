@@ -5,7 +5,6 @@ import vk_api
 import tweepy
 import config
 import json
-import time
 
 # Trick for normal unicode symbols
 reload(sys)
@@ -62,15 +61,15 @@ class GetVk(object):
                           separators=(',', ': '))
 
 
-class HandlerRawPost(GetVk):
+class HandlerRawPost:
     """docstring for HandlerRawPost"""
     def __init__(self, raw):
         self.raw = raw
 
-    def best_photo_pars(self):
+    def best_photo_pars(self, input):
         # Парсер на предмет нахождения фотки лучшего качества
         # + Поиск текста Оriginal специфичного для паблика
-        text = self.raw['text']
+        text = input['text']
         # Если находим текст "Original: http:" в поле text
         if text.find('Original: http:') == 0:
             begin = text.find('http:')  # Начало ссылки
@@ -130,11 +129,9 @@ def check_msg_len(message):
 def prepare_tweet():
     # Подготовка твита перед отправкой.
     get = GetVk(owner_id=GROUP_ID, count=1, offset=3).get_raw_post()
-    txt = HandlerRawPost(get).get_txt()
-    # TODO Задержка между запросами, хотя это дикие костыли.
-    # Так как запрос должен быть один. Надо его вынести в отдельную функцию.
-    # time.sleep(4)
-    imgs = HandlerRawPost(get).get_img()
+    handler = HandlerRawPost(get)
+    txt = handler.get_txt()
+    imgs = handler.get_img()
     # Если нету текста в сообщении, то просто пропускаем.
     if txt is not None:
         result = str(txt) + '\n' + str('\n'.join(imgs))
