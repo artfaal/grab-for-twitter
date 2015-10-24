@@ -61,10 +61,16 @@ class GetVk(object):
         return json.dumps(self.get_raw_post(), indent=4, ensure_ascii=False,
                           separators=(',', ': '))
 
-    def best_photo_pars(self, raw):
+
+class HandlerRawPost(GetVk):
+    """docstring for HandlerRawPost"""
+    def __init__(self, raw):
+        self.raw = raw
+
+    def best_photo_pars(self):
         # Парсер на предмет нахождения фотки лучшего качества
         # + Поиск текста Оriginal специфичного для паблика
-        text = raw['text']
+        text = self.raw['text']
         # Если находим текст "Original: http:" в поле text
         if text.find('Original: http:') == 0:
             begin = text.find('http:')  # Начало ссылки
@@ -75,7 +81,7 @@ class GetVk(object):
             # Создаем список, куда закинем все ключи миниатюр
             list_of_photo = []
             # Проходимся по всему списку
-            for key, value in raw.iteritems():
+            for key, value in self.raw.iteritems():
                 # Находим ключи фотографий
                 if key.find('photo_') == 0:
                     # Добавляем цифры в конце ключа в список
@@ -83,12 +89,12 @@ class GetVk(object):
             # Выявляем максимальное число и сразу преобразуем обратно
             max_size_photo_key = 'photo_'+str(max(list_of_photo))
             # Возвращаем значение ключа
-            return raw[max_size_photo_key]
+            return self.raw[max_size_photo_key]
 
     def get_img(self):
         # Беря за основу get_raw_post извлекаем все картинки из поста
         # в максимальном качестве.
-        raw = self.get_raw_post()
+        raw = self.raw
         links = []
         for item in raw['items']:
             # Проверяем, не галимый ли это репост или видео
@@ -101,7 +107,7 @@ class GetVk(object):
         return links
 
     def get_txt(self):
-        raw = self.get_raw_post()
+        raw = self.raw
         text = raw['items'][0]['text']
         if len(text) > 1:
             return text
@@ -123,12 +129,12 @@ def check_msg_len(message):
 
 def prepare_tweet():
     # Подготовка твита перед отправкой.
-    get = GetVk(owner_id=GROUP_ID, count=1, offset=2)
-    txt = get.get_txt()
+    get = GetVk(owner_id=GROUP_ID, count=1, offset=3).get_raw_post()
+    txt = HandlerRawPost(get).get_txt()
     # TODO Задержка между запросами, хотя это дикие костыли.
     # Так как запрос должен быть один. Надо его вынести в отдельную функцию.
-    time.sleep(4)
-    imgs = get.get_img()
+    # time.sleep(4)
+    imgs = HandlerRawPost(get).get_img()
     # Если нету текста в сообщении, то просто пропускаем.
     if txt is not None:
         result = str(txt) + '\n' + str('\n'.join(imgs))
