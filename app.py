@@ -100,8 +100,11 @@ class HandlerRawPost(object):
             # Проверяем, не галимый ли это репост или видео
             if 'attachments' in item and 'photo' in item['attachments'][0]:
                 attachments = item['attachments']
-                # Для каждой фотки отрабатывается функция
-                links.append(self.best_photo_pars(attachments[0]['photo']))
+                # Проверяем длинну листа фотографий и пцскаем по ним цикл
+                i = 0
+                while i < len(attachments):
+                    links.append(self.best_photo_pars(attachments[i]['photo']))
+                    i += 1
             else:
                 pass
         return links
