@@ -61,8 +61,9 @@ class GetVk(object):
                           separators=(',', ': '))
 
 
-class HandlerRawPost:
-    """docstring for HandlerRawPost"""
+class HandlerRawPost(object):
+    """Обработчик полученных из ВК постов. Разделено на классы,
+    что бы исключить множесвенные запросы."""
     def __init__(self, raw):
         self.raw = raw
 
@@ -106,6 +107,7 @@ class HandlerRawPost:
         return links
 
     def get_txt(self):
+        # Если длинна текста больше  1, то отправляет значение
         raw = self.raw
         text = raw['items'][0]['text']
         if len(text) > 1:
@@ -127,10 +129,13 @@ def check_msg_len(message):
 
 
 def prepare_tweet():
-    # Подготовка твита перед отправкой.
+    # Вытаскиваем необходимые посты, засовывая raw в get
     get = GetVk(owner_id=GROUP_ID, count=1, offset=3).get_raw_post()
+    # Опеределяем переменну в классе HandlerRawPost
     handler = HandlerRawPost(get)
+    # Вытаксиваем текст
     txt = handler.get_txt()
+    # Вытаскиваем картинки
     imgs = handler.get_img()
     # Если нету текста в сообщении, то просто пропускаем.
     if txt is not None:
