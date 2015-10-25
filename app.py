@@ -81,7 +81,7 @@ class HandlerRawPost(object):
             # Создаем список, куда закинем все ключи миниатюр
             list_of_photo = []
             # Проходимся по всему списку
-            for key, value in self.raw.iteritems():
+            for key, value in input.iteritems():
                 # Находим ключи фотографий
                 if key.find('photo_') == 0:
                     # Добавляем цифры в конце ключа в список
@@ -89,7 +89,7 @@ class HandlerRawPost(object):
             # Выявляем максимальное число и сразу преобразуем обратно
             max_size_photo_key = 'photo_'+str(max(list_of_photo))
             # Возвращаем значение ключа
-            return self.raw[max_size_photo_key]
+            return input[max_size_photo_key]
 
     def get_img(self):
         # Беря за основу get_raw_post извлекаем все картинки из поста
@@ -130,7 +130,7 @@ def check_msg_len(message):
 
 def prepare_tweet():
     # Вытаскиваем необходимые посты, засовывая raw в get
-    get = GetVk(owner_id=GROUP_ID, count=1, offset=3).get_raw_post()
+    get = GetVk(owner_id=GROUP_ID, count=1, offset=4).get_raw_post()
     # Опеределяем переменну в классе HandlerRawPost
     handler = HandlerRawPost(get)
     # Вытаксиваем текст
